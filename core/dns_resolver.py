@@ -1,5 +1,5 @@
 """
-Vortex SNI Hunter Pro - DNS Resolver & Poisoning Detector
+SNI Scanner Pro - DNS Resolver & Poisoning Detector
 Supports Local Async Resolution & Secure DoH (Cloudflare / Google)
 """
 

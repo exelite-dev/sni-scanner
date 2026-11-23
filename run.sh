@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# Vortex SNI Hunter Pro - Linux / macOS Launcher
+# SNI Scanner Pro - Linux / macOS Launcher
 cd "$(dirname "$0")"
 
 echo "========================================================"

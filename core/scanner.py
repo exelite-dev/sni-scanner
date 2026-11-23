@@ -1,5 +1,5 @@
 """
-Vortex SNI Hunter Pro - High-Throughput Asynchronous Scanner Engine
+SNI Scanner Pro - High-Throughput Asynchronous Scanner Engine
 Coordinates DNS, TLS, and Reality checks across multiple workers.
 """
 

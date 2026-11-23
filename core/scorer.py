@@ -1,5 +1,5 @@
 """
-Vortex SNI Hunter Pro - Quality Scorer & Recommendation Engine
+SNI Scanner Pro - Quality Scorer & Recommendation Engine
 Calculates a 0-100 Reality Compatibility Score and assigns Quality Grades based on
 DNS, TLS 1.3, ALPN, Certificate Health (Validity, Trust, SAN match, Expiry), and Latency.
 """

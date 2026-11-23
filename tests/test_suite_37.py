@@ -1,5 +1,5 @@
 """
-Vortex SNI Hunter Pro - 37 Comprehensive Production Test Suite
+SNI Scanner Pro - 37 Comprehensive Production Test Suite
 Validates all core modules: Sanitizer, Data Sources, Tranco 1M, GeoIP, DNS Resolver,
 TLS Checker, Reality Matcher, Scorer, Concurrency Engine, and Web API.
 """

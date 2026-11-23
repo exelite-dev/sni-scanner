@@ -1,5 +1,5 @@
 """
-Vortex SNI Hunter Pro - Massive Multi-Source Aggregator & Domain Sanitizer
+SNI Scanner Pro - Massive Multi-Source Aggregator & Domain Sanitizer
 Provides access to massive offline databases, Tranco Top 1M ZIP archives, live GitHub feeds, and custom imports.
 """
 

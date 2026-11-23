@@ -1,9 +1,9 @@
 version: '3.8'
 
 services:
-  vortex-sni-hunter:
+  sni-scanner:
     build: .
-    container_name: vortex-sni-hunter
+    container_name: sni-scanner
     ports:
       - "8787:8787"
     restart: unless-stopped

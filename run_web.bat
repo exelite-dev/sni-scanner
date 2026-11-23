@@ -1,7 +1,7 @@
 @echo off
 chcp 65001 >nul
 cd /d "%~dp0"
-title Vortex SNI Hunter Pro - Web Dashboard
+title SNI Scanner Pro - Web Dashboard
 color 0b
 
 echo ========================================================

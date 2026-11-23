@@ -1,4 +1,4 @@
-// Vortex SNI Hunter Pro - Frontend Application
+// SNI Scanner Pro - Frontend Application
 // Real-time SSE streaming, multi-source resolution, and lowest-latency sorting.
 
 let currentEventSource = null;
@@ -422,7 +422,7 @@ function exportJson() {
     const dataStr = 'data:text/json;charset=utf-8,' + encodeURIComponent(JSON.stringify(allResults, null, 2));
     const dlAnchor = document.createElement('a');
     dlAnchor.setAttribute('href', dataStr);
-    dlAnchor.setAttribute('download', `vortex_snis_${Date.now()}.json`);
+    dlAnchor.setAttribute('download', `sni_scanner_${Date.now()}.json`);
     dlAnchor.click();
     dlAnchor.remove();
 }
@@ -450,7 +450,7 @@ function exportCsv() {
     const encodedUri = encodeURI(csvContent);
     const link = document.createElement('a');
     link.setAttribute('href', encodedUri);
-    link.setAttribute('download', `vortex_snis_${Date.now()}.csv`);
+    link.setAttribute('download', `sni_scanner_${Date.now()}.csv`);
     link.click();
     link.remove();
 }

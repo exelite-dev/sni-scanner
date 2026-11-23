@@ -1,5 +1,5 @@
 """
-Vortex SNI Hunter Pro - Reality Protocol Matcher & Server Prober
+SNI Scanner Pro - Reality Protocol Matcher & Server Prober
 Validates destination website behavior and tests reachability to target server IP.
 """
 

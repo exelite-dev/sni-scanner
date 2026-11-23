@@ -1,5 +1,5 @@
 """
-Vortex SNI Hunter Pro - Elite CLI Interface
+SNI Scanner Pro - Elite CLI Interface
 High-speed terminal SNI scanner with live animated progress and formatted tables.
 """
 
@@ -63,14 +63,14 @@ async def run_cli(args):
 
     # Header Panel
     if HAS_RICH:
-        banner = """[bold cyan]V O R T E X   S N I   H U N T E R   P R O[/bold cyan]
+        banner = """[bold cyan]S N I   S C A N N E R   P R O[/bold cyan]
 [dim]Ultimate TLS 1.3, ALPN & Lowest-Ping Reality Scanner for Iran Clean IPs[/dim]
 [yellow]Target Server:[/yellow] [bold white]{}:{} [/bold white] | [yellow]Source Pool:[/yellow] [bold white]{} domains[/bold white] | [yellow]Sort By:[/yellow] [bold green]{}[/bold green] | [yellow]Concurrency:[/yellow] [bold white]{}[/bold white]""".format(
             args.target_server or "None", args.target_port, len(domains), args.sort_by, args.concurrency
         )
         console.print(Panel(banner, border_style="cyan"))
     else:
-        print(f"=== VORTEX SNI HUNTER PRO ===")
+        print(f"=== SNI SCANNER PRO ===")
         print(f"Target Server: {args.target_server}:{args.target_port} | Domains: {len(domains)} | Sort: {args.sort_by}")
 
     scanner = SNIScanner(
@@ -196,7 +196,7 @@ async def run_cli(args):
 
 
 def main():
-    parser = argparse.ArgumentParser(description="Vortex SNI Hunter Pro - High-Speed Reality SNI Scanner")
+    parser = argparse.ArgumentParser(description="SNI Scanner Pro - High-Speed Reality SNI Scanner")
     parser.add_argument("--category", "-c", default="mega_all", help="Category: mega_all, german_european_mega, global_cdns_mega, etc.")
     parser.add_argument("--domains", "-d", type=str, help="Comma-separated custom domain list")
     parser.add_argument("--url", "-u", type=str, help="Fetch domains live from custom online URL")

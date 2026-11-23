@@ -1,5 +1,5 @@
 """
-Vortex SNI Hunter Pro - TLS 1.3, ALPN & Deep X.509 Certificate Verifier
+SNI Scanner Pro - TLS 1.3, ALPN & Deep X.509 Certificate Verifier
 Performs strict TLS handshake, ALPN negotiation, CA trust validation, and SAN matching.
 """
 

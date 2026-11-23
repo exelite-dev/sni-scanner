@@ -1,5 +1,5 @@
 """
-Vortex SNI Hunter Pro - FastAPI Web Application
+SNI Scanner Pro - FastAPI Web Application
 Provides REST API, Server-Sent Events (SSE), GeoIP Auto-Detection, and Tranco 1M support.
 """
 
@@ -16,7 +16,7 @@ from core.scorer import ScoredSNI
 from core.sources import DomainSourceManager, ONLINE_REPOSITORIES
 from core.geo_matcher import ServerGeoMatcher
 
-app = FastAPI(title="Vortex SNI Hunter Pro", version="2.3.0")
+app = FastAPI(title="SNI Scanner Pro", version="2.3.0")
 
 BASE_DIR = os.path.dirname(__file__)
 app.mount("/static", StaticFiles(directory=os.path.join(BASE_DIR, "static")), name="static")

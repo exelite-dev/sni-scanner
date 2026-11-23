@@ -1,5 +1,5 @@
 """
-Vortex SNI Hunter Pro - Server Geo-Intelligence & Auto-Matcher
+SNI Scanner Pro - Server Geo-Intelligence & Auto-Matcher
 Detects VPS geographic location, ISP, and datacenter, and matches the optimal SNI pool.
 """
 
