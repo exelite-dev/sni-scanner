@@ -1,0 +1,296 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Vortex SNI Hunter Pro • اسکنر پیشرفته، گواهی سنج و مگا-پول SNI</title>
+    <link rel="stylesheet" href="/static/style.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700;800&family=Vazirmatn:wght@300;400;500;700;800;900&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <div class="app-background">
+        <div class="glow-orb orb-1"></div>
+        <div class="glow-orb orb-2"></div>
+        <div class="glow-orb orb-3"></div>
+    </div>
+
+    <div class="app-container">
+        <!-- Header -->
+        <header class="app-header glass-card">
+            <div class="header-content">
+                <div class="logo-box">
+                    <span class="logo-icon">⚡️</span>
+                    <div>
+                        <h1 class="logo-title">VORTEX SNI HUNTER <span class="badge-pro">PRO 2.2</span></h1>
+                        <p class="logo-subtitle">مگا-اسکنر اختصاصی دامنه و SNI با راستی‌آزمایی عمیق گواهی‌های TLS و سلامت شبکه</p>
+                    </div>
+                </div>
+                <div class="header-status">
+                    <span class="status-indicator online"></span>
+                    <span class="status-text">متصل به آرشیو Tranco 1M و مگا-دیتابیس دامنه‌ها</span>
+                </div>
+            </div>
+        </header>
+
+        <!-- Main Bento Grid -->
+        <main class="bento-grid">
+            <!-- Controls Section -->
+            <section class="bento-card config-section glass-card">
+                <div class="card-header">
+                    <h2>⚙️ تنظیمات منبع و اسکنر</h2>
+                    <span class="badge badge-accent">اتصال به مگا-دیتابیس & Tranco 1M</span>
+                </div>
+
+                <form id="scanForm">
+                    <div class="form-group">
+                        <label for="categorySelect">انتخاب منبع دامنه‌ها (آرشیو لوکال، دسته‌ها و منابع آنلاین):</label>
+                        <select id="categorySelect" class="form-control">
+                            <option value="auto" selected>🎯 خودکار بر اساس لوکیشن سرور شما (Auto Geo-Match)</option>
+                            <option value="german_european_mega">🇩🇪 سرورهای آلمان و اروپا (Hetzner, Telekom, Play2Go - ۲۱۰+ دامنه)</option>
+                            <option value="netherlands_core">🇳🇱 سرورهای هلند (Amsterdam, LeaseWeb, Serverius - ۱۴۰+ دامنه)</option>
+                            <option value="turkey_core">🇹🇷 سرورهای ترکیه (Turkcell, Vodafone, Radore - ۹۰+ دامنه)</option>
+                            <option value="france_core">🇫🇷 سرورهای فرانسه (OVHcloud, Scaleway - ۱۱۰+ دامنه)</option>
+                            <option value="united_kingdom_core">🇬🇧 سرورهای انگلستان (London, Linode UK - ۹۵+ دامنه)</option>
+                            <option value="finland_nordic_core">🇫🇮 سرورهای فنلاند و نوردیک (Helsinki, Hetzner FI - ۷۵+ دامنه)</option>
+                            <option value="tranco_top_1m">📂 آرشیو لوکال Tranco Top 1M (فایل فشرده ۱،۰۰۰،۰۰۰ دامنه با ساب‌دامین)</option>
+                            <option value="mega_all">🔥 تمام منابع یکجا (مگا-پول ۷۹۰+ دامنه طلایی گلچین‌شده)</option>
+                            <option value="global_cdns_mega">⚡️ CDNهای ابری سریع جهانی (کلودفلر، آکامای، فستلی و... ۱۰۰+ دامنه)</option>
+                            <option value="microsoft_azure_mega">🏢 ابر مایکروسافت، آژور و آفیس (۷۰+ دامنه)</option>
+                            <option value="apple_mega">🍎 شبکه و CDNهای سراسری اپل (۵۰+ دامنه)</option>
+                            <option value="developer_cloud_mega">🚀 کلودهاستینگ، ورسل و دولوپرها (۱۰۰+ دامنه)</option>
+                            <option value="gaming_streaming_mega">🎮 گیمینگ و استریمینگ (استیم، دیسکورد، اسپاتیفای و...)</option>
+                            <option value="fintech_banking_mega">🏦 سرویس‌های بین‌المللی مالی و بانکی</option>
+                            <option value="global_top_mega">🌐 معتبرترین دامنه‌های پربازدید جهان</option>
+                            <option value="online_amir_clean_sni">📡 منبع آنلاین گیت‌هاب (AmirH3bashi SNIs)</option>
+                            <option value="online_v2fly_apple">📡 منبع آنلاین گیت‌هاب (v2fly Apple CDN)</option>
+                            <option value="online_v2fly_microsoft">📡 منبع آنلاین گیت‌هاب (v2fly Microsoft Edge)</option>
+                            <option value="custom_url">🔗 وارد کردن لینک مستقیم فایل یا گیت‌هاب</option>
+                        </select>
+                    </div>
+
+                    <div id="customUrlGroup" class="form-group" style="display: none;">
+                        <label for="customUrlInput">آدرس لینک آنلاین (URL مستقیم فایل متنی یا گیت‌هاب):</label>
+                        <input type="url" id="customUrlInput" class="form-control ltr" placeholder="https://raw.githubusercontent.com/.../domains.txt">
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="scanLimitSelect">تعداد دامنه برای اسکن:</label>
+                            <select id="scanLimitSelect" class="form-control">
+                                <option value="50">⚡️ ۵۰ دامنه (اسکن فوق‌سریع در چند ثانیه)</option>
+                                <option value="100" selected>⚡️ ۱۰۰ دامنه برتر (پیش‌فرض توصیه شده)</option>
+                                <option value="250">🔍 ۲۵۰ دامنه (عمیق)</option>
+                                <option value="500">🔥 ۵۰۰ دامنه (بسیار جامع)</option>
+                                <option value="1000">🚀 ۱۰۰۰ دامنه از آرشیو</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="sortModeSelect">ترتیب اولویت‌بندی نتایج:</label>
+                            <select id="sortModeSelect" class="form-control">
+                                <option value="latency" selected>⚡️ کمترین پینگ اول (سریع‌ترین)</option>
+                                <option value="score">🏆 بالاترین امتیاز Reality</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="serverIp">آی‌پی سرور شما (لوکیشن‌یابی خودکار و تست پینگ):</label>
+                            <div class="input-with-geo">
+                                <input type="text" id="serverIp" class="form-control ltr" value="48.102.164.241" placeholder="مثال: 48.102.164.241">
+                                <div id="serverGeoInfo" class="geo-status-badge">
+                                    <span class="geo-flag" id="geoFlag">🇩🇪</span>
+                                    <span class="geo-text" id="geoText">در حال استعلام لوکیشن سرور...</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label for="serverPort">پورت اینباند Reality:</label>
+                            <input type="number" id="serverPort" class="form-control ltr" value="7">
+                        </div>
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="concurrencyInput">تعداد ورکر همزمان (Concurrency):</label>
+                            <input type="number" id="concurrencyInput" class="form-control ltr" value="20" min="1" max="50">
+                        </div>
+                        <div class="form-group">
+                            <label for="timeoutInput">تایم‌اوت هر تست (ثانیه):</label>
+                            <input type="number" id="timeoutInput" class="form-control ltr" value="3.5" step="0.5" min="1" max="10">
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="customDomains">یا دامنه‌های دلخواه خودت را بنویس (اختیاری - با کاما یا خط جدید):</label>
+                        <textarea id="customDomains" class="form-control ltr" rows="2" placeholder="speedtest.net, hetzner.com, ..."></textarea>
+                    </div>
+
+                    <div class="form-actions">
+                        <button type="submit" id="startScanBtn" class="btn btn-primary glow-btn">
+                            <span class="btn-icon">🚀</span> شروع اسکن زنده
+                        </button>
+                        <button type="button" id="stopScanBtn" class="btn btn-danger" disabled>
+                            <span class="btn-icon">⏹</span> توقف
+                        </button>
+                    </div>
+                </form>
+            </section>
+
+            <!-- Metrics Bento -->
+            <section class="bento-metrics">
+                <div class="metric-card glass-card">
+                    <div class="metric-icon">🔍</div>
+                    <div class="metric-info">
+                        <span class="metric-label">اسکن شده / کل</span>
+                        <h3 id="statProgress">0 / 0</h3>
+                    </div>
+                </div>
+
+                <div class="metric-card glass-card">
+                    <div class="metric-icon">🛡</div>
+                    <div class="metric-info">
+                        <span class="metric-label">گواهی‌های معتبر و فعال</span>
+                        <h3 id="statTls13">0</h3>
+                    </div>
+                </div>
+
+                <div class="metric-card glass-card">
+                    <div class="metric-icon">⚡️</div>
+                    <div class="metric-info">
+                        <span class="metric-label">کمترین پینگ ثبت شده</span>
+                        <h3 id="statMinPing">--</h3>
+                    </div>
+                </div>
+
+                <div class="metric-card glass-card">
+                    <div class="metric-icon">🏆</div>
+                    <div class="metric-info">
+                        <span class="metric-label">سریع‌ترین دامنه (کمترین پینگ)</span>
+                        <h3 id="statBestSni" class="text-gold">در انتظار اسکن...</h3>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Live Progress Bar -->
+            <section id="progressSection" class="progress-section glass-card" style="display: none;">
+                <div class="progress-header">
+                    <span id="currentStatusText">در حال اسکن دامنه: ...</span>
+                    <span id="progressPercentage">0%</span>
+                </div>
+                <div class="progress-bar-container">
+                    <div id="progressBarFill" class="progress-bar-fill" style="width: 0%;"></div>
+                </div>
+            </section>
+
+            <!-- Results Table Section -->
+            <section class="bento-card results-section glass-card">
+                <div class="results-header">
+                    <div class="results-title">
+                        <h2>📊 نتایج SNI برای سرور شما (مرتب شده از کمترین پینگ)</h2>
+                        <span id="resultsCountBadge" class="badge badge-secondary">0 نتیجه</span>
+                    </div>
+                    <div class="results-controls">
+                        <input type="text" id="tableSearch" class="form-control ltr search-input" placeholder="🔍 جستجو در دامنه‌ها، IP یا صادرکننده...">
+                        <select id="gradeFilter" class="form-control filter-select">
+                            <option value="all">تمام گریدها</option>
+                            <option value="S+">فقط Grade S+ (۹۰-۱۰۰)</option>
+                            <option value="A">Grade A و بالاتر</option>
+                            <option value="B">Grade B و بالاتر</option>
+                        </select>
+                        <select id="tableSortFilter" class="form-control filter-select">
+                            <option value="latency" selected>⚡️ مرتب‌سازی: کمترین پینگ</option>
+                            <option value="score">🏆 مرتب‌سازی: بیشترین امتیاز</option>
+                        </select>
+                        <button id="exportJsonBtn" class="btn btn-outline" disabled>📥 خروجی JSON</button>
+                        <button id="exportCsvBtn" class="btn btn-outline" disabled>📊 خروجی CSV</button>
+                    </div>
+                </div>
+
+                <div class="table-responsive">
+                    <table class="sni-table">
+                        <thead>
+                            <tr>
+                                <th>#</th>
+                                <th>دامنه (SNI)</th>
+                                <th>پینگ کل</th>
+                                <th>وضعیت و اعتبار گواهی (SSL Health)</th>
+                                <th>امتیاز</th>
+                                <th>گرید</th>
+                                <th>نسخه TLS</th>
+                                <th>ALPN</th>
+                                <th>آی‌پی تمیز</th>
+                                <th>وضعیت</th>
+                                <th>عملیات</th>
+                            </tr>
+                        </thead>
+                        <tbody id="resultsTableBody">
+                            <tr class="empty-row">
+                                <td colspan="11">برای شروع آنالیز، دکمه «شروع اسکن زنده» را کلیک کنید.</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </section>
+        </main>
+
+        <!-- Footer -->
+        <footer class="app-footer">
+            <p>Vortex SNI Hunter Pro • اعتبارسنجی عمیق گواهی‌های X.509، رصد مسمومیت DNS و همگام‌سازی با VLESS Reality</p>
+        </footer>
+    </div>
+
+    <!-- Reality Panel Guide Modal -->
+    <div id="panelModal" class="modal-backdrop" style="display: none;">
+        <div class="modal-box glass-card">
+            <div class="modal-header">
+                <h3>⚡️ مقادیر آماده برای ثبت در پنل (3x-ui / Marzban / Hiddify)</h3>
+                <button type="button" class="btn-close" onclick="closePanelModal()">✕</button>
+            </div>
+            <div class="modal-body">
+                <div class="alert-notice">
+                    <span class="notice-icon">⚠️</span>
+                    <div>
+                        <strong>نکته حیاتی برای رفع خطای Handshake Failure:</strong>
+                        <p>همیشه فیلد <b>Target</b> و فیلد <b>SNI</b> باید متعلق به یک سایت باشند. هرگز یک سایت را در Target و سایت دیگر را در SNI نگذارید.</p>
+                    </div>
+                </div>
+
+                <div class="config-field-group">
+                    <label>مقدار فیلد Target (یا Dest):</label>
+                    <div class="input-copy-group">
+                        <input type="text" id="modalTargetVal" class="form-control ltr font-mono" readonly>
+                        <button class="btn btn-primary btn-sm" onclick="copyFromInput('modalTargetVal')">کپی Target</button>
+                    </div>
+                </div>
+
+                <div class="config-field-group">
+                    <label>مقدار فیلد SNI (یا ServerNames):</label>
+                    <div class="input-copy-group">
+                        <input type="text" id="modalSniVal" class="form-control ltr font-mono" readonly>
+                        <button class="btn btn-primary btn-sm" onclick="copyFromInput('modalSniVal')">کپی SNI</button>
+                    </div>
+                </div>
+
+                <div class="config-field-group">
+                    <label>پروتکل و فینگرپرینت پیشنهادی:</label>
+                    <div class="input-copy-group">
+                        <input type="text" id="modalFingerprintVal" class="form-control ltr font-mono" value="Fingerprint: chrome | ALPN: h2,http/1.1" readonly>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-outline" onclick="copyAllPanelConfig()">📋 کپی یکجای هر دو فیلد</button>
+                <button type="button" class="btn btn-primary" onclick="closePanelModal()">متوجه شدم و بستن</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Toast Notification -->
+    <div id="toast" class="toast">کپی شد!</div>
+
+    <script src="/static/app.js"></script>
+</body>
+</html>
