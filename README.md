@@ -22,7 +22,29 @@
 
 ---
 
-## 🚀 روش‌های اجرا
+## 📥 دانلود و راه‌اندازی سریع با یک دستور (Quick Start via Git)
+
+کافی است دستور متناسب با سیستم‌عامل خود را در ترمینال کپی و اجرا کنید تا پروژه دانلود شده و مستقیماً بالا بیاید:
+
+### 🔹 در ویندوز (PowerShell یا CMD):
+```powershell
+git clone https://github.com/exelite-dev/sni-scanner.git; cd sni-scanner; .\run_web.bat
+```
+
+### 🔹 در لینوکس و مک (Linux / macOS):
+```bash
+git clone https://github.com/exelite-dev/sni-scanner.git && cd sni-scanner && chmod +x run.sh && ./run.sh
+```
+
+### 🔹 با داکر (Docker One-Liner):
+```bash
+git clone https://github.com/exelite-dev/sni-scanner.git && cd sni-scanner && docker compose up -d
+```
+> سپس در مرورگر آدرس `http://127.0.0.1:8787` را باز کنید.
+
+---
+
+## 🚀 روش‌های اجرا و دستورات تکمیلی
 
 ### ۱. پنل وب پیشرفته (Web Dashboard)
 دابل کلیک روی:
