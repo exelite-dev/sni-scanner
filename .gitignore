@@ -50,3 +50,5 @@ temp/
 # Keep data zip but ignore created archives
 *.zip
 !data/*.zip
+
+.agents/

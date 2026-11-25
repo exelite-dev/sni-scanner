@@ -1,12 +1,16 @@
 """
 SNI Scanner Pro - FastAPI Web Application
-Provides REST API, Server-Sent Events (SSE), GeoIP Auto-Detection, and Tranco 1M support.
+Provides REST API, Server-Sent Events (SSE), GeoIP Auto-Detection, Tranco 1M support,
+and 3 Selectable Validation Methods:
+Method 1: Standard Passwordless SNI Scan (Fast TLS 1.3 + ALPN + Ping)
+Method 2: Live Reality Tunnel Test with User VLESS Client Config (Jitter, Speed, Ping)
+Method 3: Automated Live Test via Panel API (3X-UI / vpn-ui with guaranteed cleanup)
 """
 
 import asyncio
 import json
 import os
-from typing import List, Optional
+from typing import List, Optional, Union
 from fastapi import FastAPI, Request
 from fastapi.responses import HTMLResponse, StreamingResponse, JSONResponse
 from fastapi.staticfiles import StaticFiles
@@ -15,6 +19,9 @@ from core.scanner import SNIScanner, ScanProgress
 from core.scorer import ScoredSNI
 from core.sources import DomainSourceManager, ONLINE_REPOSITORIES
 from core.geo_matcher import ServerGeoMatcher
+from core.vless_parser import VLESSConfig, VLESSParser
+from core.tunnel_benchmarker import TunnelMetrics
+from core.panel_orchestrator import PanelCredentials
 
 app = FastAPI(title="SNI Scanner Pro", version="2.3.0")
 
@@ -77,6 +84,7 @@ async def stop_scan():
 
 @app.get("/api/scan/stream")
 async def stream_scan(
+    method: str = "standard",
     category: str = "auto",
     custom_domains: Optional[str] = None,
     custom_url: Optional[str] = None,
@@ -86,11 +94,20 @@ async def stream_scan(
     server_port: int = 7,
     concurrency: int = 20,
     timeout: float = 3.5,
+    # Method 2 params
+    vless_uri: Optional[str] = None,
+    core_path: Optional[str] = None,
+    # Method 3 params
+    panel_url: Optional[str] = None,
+    panel_user: Optional[str] = None,
+    panel_pass: Optional[str] = None,
+    panel_type: str = "3x-ui",
+    mock_mode: bool = False,
 ):
     global ACTIVE_SCANNER, LATEST_RESULTS, IS_SCANNING
 
     # Auto-match category based on Server GeoIP if category is 'auto'
-    if category == "auto" and server_ip:
+    if category == "auto" and server_ip and method == "standard":
         geo = await ServerGeoMatcher.detect_server(server_ip)
         category = geo.get("recommended_category", "mega_all")
 
@@ -105,12 +122,34 @@ async def stream_scan(
     if not domains:
         domains = ["speedtest.net", "hetzner.com", "gateway.icloud.com", "cloudflare.com"]
 
+    # Parse Method 2 / 3 configurations
+    parsed_vless = None
+    if vless_uri:
+        try:
+            parsed_vless = VLESSParser.parse(vless_uri)
+        except Exception:
+            pass
+
+    panel_creds = None
+    if panel_url and panel_user and panel_pass:
+        panel_creds = PanelCredentials(
+            url=panel_url,
+            username=panel_user,
+            password=panel_pass,
+            panel_type=panel_type,
+        )
+
     ACTIVE_SCANNER = SNIScanner(
         concurrency=concurrency,
         timeout=timeout,
         enable_doh=True,
         target_server_ip=server_ip if server_ip else None,
         target_server_port=server_port,
+        scan_method=method,
+        vless_config=parsed_vless or vless_uri,
+        panel_credentials=panel_creds,
+        core_path=core_path,
+        mock_mode=mock_mode,
     )
     LATEST_RESULTS = []
     IS_SCANNING = True
@@ -119,9 +158,9 @@ async def stream_scan(
         global IS_SCANNING
         event_queue = asyncio.Queue()
 
-        def on_progress(prog: ScanProgress, scored: ScoredSNI):
-            item_dict = scored.to_dict()
-            # Add ready-to-paste panel config
+        def on_progress(prog: ScanProgress, item: Union[ScoredSNI, TunnelMetrics]):
+            item_dict = item.to_dict()
+            item_dict["method"] = method
             item_dict["panel_config"] = {
                 "target": f"{item_dict['domain']}:443",
                 "sni": item_dict["domain"],
@@ -149,8 +188,8 @@ async def stream_scan(
 
         IS_SCANNING = False
 
-        def _latency_sort_key(x):
-            is_healthy = bool(x.get("is_tls13") and not x.get("dns_poisoned") and x.get("latency_ms"))
+        def _sort_key(x):
+            is_healthy = bool(x.get("success", False) or (x.get("is_tls13") and not x.get("dns_poisoned")))
             lat = x.get("latency_ms") or 999999
             return (0 if is_healthy else 1, lat, -x.get("score", 0))
 
@@ -159,10 +198,11 @@ async def stream_scan(
                 LATEST_RESULTS, key=lambda x: (-x.get("score", 0), x.get("latency_ms") or 999999)
             )
         else:
-            sorted_results = sorted(LATEST_RESULTS, key=_latency_sort_key)
+            sorted_results = sorted(LATEST_RESULTS, key=_sort_key)
 
         final_payload = {
             "type": "finished",
+            "method": method,
             "total_scanned": len(LATEST_RESULTS),
             "top_sni": sorted_results[0] if sorted_results else None,
             "results": sorted_results,
@@ -184,8 +224,8 @@ async def stream_scan(
 async def get_results(sort_by: str = "latency"):
     global LATEST_RESULTS
 
-    def _latency_sort_key(x):
-        is_healthy = bool(x.get("is_tls13") and not x.get("dns_poisoned") and x.get("latency_ms"))
+    def _sort_key(x):
+        is_healthy = bool(x.get("success", False) or (x.get("is_tls13") and not x.get("dns_poisoned")))
         lat = x.get("latency_ms") or 999999
         return (0 if is_healthy else 1, lat, -x.get("score", 0))
 
@@ -194,7 +234,7 @@ async def get_results(sort_by: str = "latency"):
             LATEST_RESULTS, key=lambda x: (-x.get("score", 0), x.get("latency_ms") or 999999)
         )
     else:
-        sorted_results = sorted(LATEST_RESULTS, key=_latency_sort_key)
+        sorted_results = sorted(LATEST_RESULTS, key=_sort_key)
 
     return {"count": len(sorted_results), "results": sorted_results}
 

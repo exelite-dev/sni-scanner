@@ -681,3 +681,98 @@ body {
     color: var(--text-dim);
     padding: 16px 0;
 }
+
+/* 3-Method Selection Tabs & Inputs */
+.method-selector-container {
+    margin-bottom: 20px;
+}
+
+.section-label {
+    display: block;
+    font-weight: 700;
+    margin-bottom: 10px;
+    color: var(--cyan);
+    font-size: 0.95rem;
+}
+
+.method-pills {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+    gap: 12px;
+}
+
+.method-pill {
+    background: rgba(30, 41, 59, 0.6);
+    border: 1px solid var(--border-subtle);
+    border-radius: 12px;
+    padding: 14px 16px;
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    cursor: pointer;
+    text-align: right;
+    transition: all 0.25s ease;
+    color: var(--text-main);
+}
+
+.method-pill:hover {
+    background: rgba(30, 41, 59, 0.9);
+    border-color: rgba(6, 182, 212, 0.4);
+    transform: translateY(-2px);
+}
+
+.method-pill.active {
+    background: linear-gradient(135deg, rgba(16, 185, 129, 0.2) 0%, rgba(6, 182, 212, 0.15) 100%);
+    border-color: var(--primary);
+    box-shadow: 0 0 16px rgba(16, 185, 129, 0.25);
+}
+
+.pill-icon {
+    font-size: 1.8rem;
+    flex-shrink: 0;
+}
+
+.pill-text strong {
+    display: block;
+    font-size: 0.95rem;
+    color: var(--text-main);
+    margin-bottom: 2px;
+}
+
+.pill-text small {
+    display: block;
+    font-size: 0.78rem;
+    color: var(--text-muted);
+    line-height: 1.4;
+}
+
+.method-fields-card {
+    background: rgba(15, 23, 42, 0.7);
+    border: 1px dashed rgba(6, 182, 212, 0.35);
+    border-radius: 12px;
+    padding: 18px;
+    margin-bottom: 18px;
+    animation: fadeIn 0.3s ease-in-out;
+}
+
+.field-hint {
+    display: block;
+    margin-top: 6px;
+    font-size: 0.8rem;
+    color: #38bdf8;
+}
+
+.security-note {
+    background: rgba(16, 185, 129, 0.1);
+    border: 1px solid rgba(16, 185, 129, 0.3);
+    border-radius: 8px;
+    padding: 10px 14px;
+    font-size: 0.82rem;
+    color: #6ee7b7;
+    margin-top: 10px;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(-6px); }
+    to { opacity: 1; transform: translateY(0); }
+}

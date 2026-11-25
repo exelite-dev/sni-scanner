@@ -1,9 +1,13 @@
 // SNI Scanner Pro - Frontend Application
-// Real-time SSE streaming, multi-source resolution, and lowest-latency sorting.
+// Real-time SSE streaming for 3 Selectable Validation Methods:
+// Method 1: Standard Passwordless SNI Scan
+// Method 2: Live VLESS Reality Tunnel Benchmark (Jitter, Speed, RTT)
+// Method 3: Automated Panel API Benchmark (3X-UI / vpn-ui)
 
 let currentEventSource = null;
 let allResults = [];
 let isScanning = false;
+let currentMethod = 'standard';
 
 document.addEventListener('DOMContentLoaded', () => {
     const scanForm = document.getElementById('scanForm');
@@ -18,6 +22,50 @@ document.addEventListener('DOMContentLoaded', () => {
     const exportCsvBtn = document.getElementById('exportCsvBtn');
     const serverIpInput = document.getElementById('serverIp');
 
+    // Method Switcher Buttons
+    const methodStandardBtn = document.getElementById('methodStandardBtn');
+    const methodVlessBtn = document.getElementById('methodVlessBtn');
+    const methodPanelBtn = document.getElementById('methodPanelBtn');
+
+    const method2Fields = document.getElementById('method2Fields');
+    const method3Fields = document.getElementById('method3Fields');
+    const method1ServerGroup = document.getElementById('method1ServerGroup');
+
+    function selectMethod(method) {
+        currentMethod = method;
+        [methodStandardBtn, methodVlessBtn, methodPanelBtn].forEach(btn => {
+            if (btn) btn.classList.remove('active');
+        });
+
+        if (method === 'standard') {
+            if (methodStandardBtn) methodStandardBtn.classList.add('active');
+            if (method2Fields) method2Fields.style.display = 'none';
+            if (method3Fields) method3Fields.style.display = 'none';
+            if (method1ServerGroup) method1ServerGroup.style.display = 'flex';
+            document.getElementById('metricSuccessLabel').textContent = 'گواهی‌های معتبر و فعال';
+            updateTableHeader('standard');
+        } else if (method === 'vless_client') {
+            if (methodVlessBtn) methodVlessBtn.classList.add('active');
+            if (method2Fields) method2Fields.style.display = 'block';
+            if (method3Fields) method3Fields.style.display = 'none';
+            if (method1ServerGroup) method1ServerGroup.style.display = 'none';
+            document.getElementById('metricSuccessLabel').textContent = 'تونل‌های موفق Reality';
+            updateTableHeader('tunnel');
+        } else if (method === 'panel_api') {
+            if (methodPanelBtn) methodPanelBtn.classList.add('active');
+            if (method2Fields) method2Fields.style.display = 'none';
+            if (method3Fields) method3Fields.style.display = 'block';
+            if (method1ServerGroup) method1ServerGroup.style.display = 'none';
+            document.getElementById('metricSuccessLabel').textContent = 'تونل‌های موفق پنل';
+            updateTableHeader('tunnel');
+        }
+        renderFilteredTable();
+    }
+
+    if (methodStandardBtn) methodStandardBtn.addEventListener('click', () => selectMethod('standard'));
+    if (methodVlessBtn) methodVlessBtn.addEventListener('click', () => selectMethod('vless_client'));
+    if (methodPanelBtn) methodPanelBtn.addEventListener('click', () => selectMethod('panel_api'));
+
     // Geo detect on load
     if (serverIpInput && serverIpInput.value) {
         detectServerGeo(serverIpInput.value.trim());
@@ -25,56 +73,88 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // Debounced geo detect on IP change
     let geoTimeout = null;
-    serverIpInput.addEventListener('input', () => {
-        clearTimeout(geoTimeout);
-        geoTimeout = setTimeout(() => {
-            const ip = serverIpInput.value.trim();
-            if (ip) {
-                detectServerGeo(ip);
+    if (serverIpInput) {
+        serverIpInput.addEventListener('input', () => {
+            clearTimeout(geoTimeout);
+            geoTimeout = setTimeout(() => {
+                const ip = serverIpInput.value.trim();
+                if (ip) {
+                    detectServerGeo(ip);
+                }
+            }, 500);
+        });
+    }
+
+    if (categorySelect) {
+        categorySelect.addEventListener('change', () => {
+            if (categorySelect.value === 'custom_url') {
+                customUrlGroup.style.display = 'block';
+            } else {
+                customUrlGroup.style.display = 'none';
             }
-        }, 500);
-    });
+        });
+    }
 
-    categorySelect.addEventListener('change', () => {
-        if (categorySelect.value === 'custom_url') {
-            customUrlGroup.style.display = 'block';
-        } else {
-            customUrlGroup.style.display = 'none';
-        }
-    });
+    if (scanForm) {
+        scanForm.addEventListener('submit', (e) => {
+            e.preventDefault();
+            startScan();
+        });
+    }
 
-    scanForm.addEventListener('submit', (e) => {
-        e.preventDefault();
-        startScan();
-    });
+    if (stopScanBtn) {
+        stopScanBtn.addEventListener('click', () => {
+            stopScan();
+        });
+    }
 
-    stopScanBtn.addEventListener('click', () => {
-        stopScan();
-    });
-
-    tableSearch.addEventListener('input', () => {
-        renderFilteredTable();
-    });
-
-    gradeFilter.addEventListener('change', () => {
-        renderFilteredTable();
-    });
-
-    tableSortFilter.addEventListener('change', () => {
-        renderFilteredTable();
-    });
-
-    exportJsonBtn.addEventListener('click', () => {
-        exportJson();
-    });
-
-    exportCsvBtn.addEventListener('click', () => {
-        exportCsv();
-    });
+    if (tableSearch) tableSearch.addEventListener('input', () => renderFilteredTable());
+    if (gradeFilter) gradeFilter.addEventListener('change', () => renderFilteredTable());
+    if (tableSortFilter) tableSortFilter.addEventListener('change', () => renderFilteredTable());
+    if (exportJsonBtn) exportJsonBtn.addEventListener('click', () => exportJson());
+    if (exportCsvBtn) exportCsvBtn.addEventListener('click', () => exportCsv());
 });
+
+function updateTableHeader(mode) {
+    const thead = document.getElementById('resultsTableHead');
+    if (!thead) return;
+
+    if (mode === 'tunnel') {
+        thead.innerHTML = `
+            <tr>
+                <th>#</th>
+                <th>دامنه (SNI)</th>
+                <th>پینگ تونل (RTT)</th>
+                <th>جیتر (پایداری)</th>
+                <th>سرعت دانلود</th>
+                <th>امتیاز</th>
+                <th>گرید</th>
+                <th>وضعیت تونل</th>
+                <th>عملیات</th>
+            </tr>
+        `;
+    } else {
+        thead.innerHTML = `
+            <tr>
+                <th>#</th>
+                <th>دامنه (SNI)</th>
+                <th>پینگ کل</th>
+                <th>وضعیت گواهی (SSL Health)</th>
+                <th>امتیاز</th>
+                <th>گرید</th>
+                <th>TLS</th>
+                <th>ALPN</th>
+                <th>آی‌پی تمیز</th>
+                <th>وضعیت</th>
+                <th>عملیات</th>
+            </tr>
+        `;
+    }
+}
 
 function showToast(message) {
     const toast = document.getElementById('toast');
+    if (!toast) return;
     toast.textContent = message;
     toast.classList.add('show');
     setTimeout(() => {
@@ -100,7 +180,6 @@ async function detectServerGeo(ip) {
             geoFlag.textContent = data.flag || '🌐';
             geoText.textContent = `${data.country} (${data.city}) • ${data.org}`;
 
-            // If auto category selected, update category option text to show matched country
             const catOptionAuto = document.querySelector('#categorySelect option[value="auto"]');
             if (catOptionAuto) {
                 catOptionAuto.textContent = `🎯 خودکار بر اساس لوکیشن سرور: ${data.country} (${data.flag})`;
@@ -170,14 +249,29 @@ function startScan() {
     if (isScanning) return;
 
     const category = document.getElementById('categorySelect').value;
-    const customUrl = document.getElementById('customUrlInput').value.trim();
+    const customUrl = document.getElementById('customUrlInput') ? document.getElementById('customUrlInput').value.trim() : '';
     const limit = document.getElementById('scanLimitSelect').value;
     const sortMode = document.getElementById('sortModeSelect').value;
-    const serverIp = document.getElementById('serverIp').value.trim();
-    const serverPort = document.getElementById('serverPort').value.trim();
-    const concurrency = document.getElementById('concurrencyInput').value;
-    const timeout = document.getElementById('timeoutInput').value;
-    const customDomains = document.getElementById('customDomains').value.trim();
+    const serverIp = document.getElementById('serverIp') ? document.getElementById('serverIp').value.trim() : '';
+    const serverPort = document.getElementById('serverPort') ? document.getElementById('serverPort').value.trim() : '7';
+
+    // Method-specific inputs
+    const vlessUri = document.getElementById('vlessUriInput') ? document.getElementById('vlessUriInput').value.trim() : '';
+    const corePath = document.getElementById('corePathInput') ? document.getElementById('corePathInput').value.trim() : '';
+    const panelUrl = document.getElementById('panelUrlInput') ? document.getElementById('panelUrlInput').value.trim() : '';
+    const panelUser = document.getElementById('panelUserInput') ? document.getElementById('panelUserInput').value.trim() : '';
+    const panelPass = document.getElementById('panelPassInput') ? document.getElementById('panelPassInput').value.trim() : '';
+    const panelType = document.getElementById('panelTypeSelect') ? document.getElementById('panelTypeSelect').value : '3x-ui';
+
+    if (currentMethod === 'vless_client' && !vlessUri) {
+        showToast('لطفاً لینک کانفیگ VLESS Reality را وارد کنید.');
+        return;
+    }
+
+    if (currentMethod === 'panel_api' && (!panelUrl || !panelUser || !panelPass)) {
+        showToast('لطفاً آدرس پنل، یوزرنیم و پسورد را وارد کنید.');
+        return;
+    }
 
     // Reset UI
     allResults = [];
@@ -196,19 +290,28 @@ function startScan() {
 
     // Build SSE Query
     const params = new URLSearchParams({
+        method: currentMethod,
         category: category,
         server_ip: serverIp,
         server_port: serverPort,
-        concurrency: concurrency,
-        timeout: timeout,
+        concurrency: currentMethod === 'standard' ? '20' : '5',
+        timeout: '3.5',
         limit: limit,
         sort_by: sortMode,
     });
-    if (customDomains) {
-        params.append('custom_domains', customDomains);
-    }
+
     if (category === 'custom_url' && customUrl) {
         params.append('custom_url', customUrl);
+    }
+    if (currentMethod === 'vless_client' && vlessUri) {
+        params.append('vless_uri', vlessUri);
+        if (corePath) params.append('core_path', corePath);
+    }
+    if (currentMethod === 'panel_api' && panelUrl) {
+        params.append('panel_url', panelUrl);
+        params.append('panel_user', panelUser);
+        params.append('panel_pass', panelPass);
+        params.append('panel_type', panelType);
     }
 
     if (currentEventSource) {
@@ -239,19 +342,15 @@ function startScan() {
 function handleResultItem(progress, item) {
     allResults.push(item);
 
-    // Update Progress
-    document.getElementById('currentStatusText').textContent = `در حال اسکن دامنه: ${progress.current_domain}`;
+    document.getElementById('currentStatusText').textContent = `در حال بررسی دامنه: ${progress.current_domain}`;
     document.getElementById('progressPercentage').textContent = `${progress.percent}%`;
     document.getElementById('progressBarFill').style.width = `${progress.percent}%`;
-
-    // Update Metrics
     document.getElementById('statProgress').textContent = `${progress.completed} / ${progress.total}`;
-    
-    const tls13Count = allResults.filter(r => r.is_tls13).length;
-    document.getElementById('statTls13').textContent = tls13Count;
 
-    // Fast working items sorted by latency
-    const workingWithPing = allResults.filter(r => r.latency_ms && r.is_tls13 && !r.dns_poisoned);
+    const successCount = allResults.filter(r => (r.success || (r.is_tls13 && !r.dns_poisoned))).length;
+    document.getElementById('statTls13').textContent = successCount;
+
+    const workingWithPing = allResults.filter(r => r.latency_ms && (r.success || (r.is_tls13 && !r.dns_poisoned)));
     if (workingWithPing.length > 0) {
         workingWithPing.sort((a, b) => a.latency_ms - b.latency_ms);
         const minPing = Math.round(workingWithPing[0].latency_ms);
@@ -278,8 +377,7 @@ function handleFinished(finalData) {
         currentEventSource = null;
     }
 
-    // Refresh best item
-    const working = allResults.filter(r => r.latency_ms && r.is_tls13 && !r.dns_poisoned);
+    const working = allResults.filter(r => r.latency_ms && (r.success || (r.is_tls13 && !r.dns_poisoned)));
     if (working.length > 0) {
         working.sort((a, b) => a.latency_ms - b.latency_ms);
         document.getElementById('statBestSni').textContent = `${working[0].domain} (${Math.round(working[0].latency_ms)}ms)`;
@@ -311,10 +409,9 @@ function sortItems(list, sortMode) {
     if (sortMode === 'score') {
         return [...list].sort((a, b) => (b.score || 0) - (a.score || 0));
     }
-    // Default: Latency ascending (lowest ping first)
     return [...list].sort((a, b) => {
-        const aHealthy = (a.is_tls13 && !a.dns_poisoned && a.latency_ms);
-        const bHealthy = (b.is_tls13 && !b.dns_poisoned && b.latency_ms);
+        const aHealthy = (a.success || (a.is_tls13 && !a.dns_poisoned && a.latency_ms));
+        const bHealthy = (b.success || (b.is_tls13 && !b.dns_poisoned && b.latency_ms));
         if (aHealthy && !bHealthy) return -1;
         if (!aHealthy && bHealthy) return 1;
         const latA = a.latency_ms || 999999;
@@ -326,9 +423,11 @@ function sortItems(list, sortMode) {
 
 function renderFilteredTable() {
     const tbody = document.getElementById('resultsTableBody');
-    const query = document.getElementById('tableSearch').value.toLowerCase().trim();
-    const grade = document.getElementById('gradeFilter').value;
-    const sortMode = document.getElementById('tableSortFilter').value;
+    if (!tbody) return;
+
+    const query = document.getElementById('tableSearch') ? document.getElementById('tableSearch').value.toLowerCase().trim() : '';
+    const grade = document.getElementById('gradeFilter') ? document.getElementById('gradeFilter').value : 'all';
+    const sortMode = document.getElementById('tableSortFilter') ? document.getElementById('tableSortFilter').value : 'latency';
 
     let filtered = sortItems(allResults, sortMode);
 
@@ -346,10 +445,12 @@ function renderFilteredTable() {
         }
     }
 
+    const isTunnelMode = (currentMethod === 'vless_client' || currentMethod === 'panel_api');
+
     if (filtered.length === 0) {
         tbody.innerHTML = `
             <tr class="empty-row">
-                <td colspan="11">هیچ نتیجه‌ای مطابق با جستجو یا فیلتر فعلی یافت نشد.</td>
+                <td colspan="${isTunnelMode ? 9 : 11}">هیچ نتیجه‌ای مطابق با جستجو یا فیلتر فعلی یافت نشد.</td>
             </tr>
         `;
         return;
@@ -357,62 +458,71 @@ function renderFilteredTable() {
 
     let rowsHtml = '';
     filtered.forEach((item, index) => {
-        const isHealthy = item.is_tls13 && !item.dns_poisoned;
+        const isHealthy = Boolean(item.success || (item.is_tls13 && !item.dns_poisoned));
         const pingClass = (item.latency_ms && item.latency_ms < 150) ? 'ping-ultra' : (item.latency_ms && item.latency_ms < 300) ? 'ping-good' : 'ping-high';
         const pingDisplay = item.latency_ms ? `<span class="badge ${pingClass} ltr font-mono">${Math.round(item.latency_ms)} ms</span>` : '<span class="text-danger">تایم‌اوت</span>';
-        const tcpPingDisplay = item.tcp_latency_ms ? `<span class="text-muted ltr font-mono">${Math.round(item.tcp_latency_ms)} ms</span>` : '--';
-
         const gradeClass = `grade-${(item.grade || 'F').toLowerCase().replace('+', 'plus')}`;
-        const tlsDisplay = item.is_tls13 ? '<span class="badge badge-success">TLS 1.3</span>' : `<span class="badge badge-warning">${item.tls_version || 'Fail'}</span>`;
-        const alpnDisplay = item.alpn ? `<span class="badge badge-info font-mono">${item.alpn}</span>` : '<span class="text-muted">None</span>';
-        const ipDisplay = item.primary_ip ? `<span class="font-mono ltr">${item.primary_ip}</span>` : '<span class="text-danger">نامعتبر</span>';
-        const statusBadge = isHealthy ? '<span class="badge badge-success">مناسب Reality</span>' : '<span class="badge badge-danger">نامناسب</span>';
 
-        let certHealthDisplay = '<span class="text-muted font-mono">--</span>';
-        if (item.cert_trusted && item.cert_valid) {
-            const issuerShort = (item.issuer || 'Trusted CA').substring(0, 14);
-            const daysText = item.cert_expires_days !== null ? `${item.cert_expires_days} روز` : 'معتبر';
-            certHealthDisplay = `<span class="badge badge-success font-mono" title="صادرکننده: ${item.issuer || ''} | تاریخ انقضا: ${item.cert_not_after || ''}">✅ ${issuerShort} (${daysText})</span>`;
-        } else if (item.cert_expires_days !== null && item.cert_expires_days <= 0) {
-            certHealthDisplay = `<span class="badge badge-danger" title="${item.cert_not_after || ''}">❌ منقضی شده</span>`;
-        } else if (item.cert_trusted === false) {
-            certHealthDisplay = `<span class="badge badge-warning" title="${item.error || 'گواهی بدون اعتماد عمومی'}">⚠️ بدون اعتماد عمومی</span>`;
-        } else if (item.cert_san_matched === false && item.cert_san && item.cert_san.length > 0) {
-            certHealthDisplay = `<span class="badge badge-warning" title="عدم تطابق با SAN دامنه">⚠️ عدم تطابق SAN</span>`;
+        if (isTunnelMode) {
+            const jitterDisplay = item.jitter_ms ? `<span class="badge badge-info font-mono ltr">${Math.round(item.jitter_ms)} ms</span>` : '<span class="text-muted">--</span>';
+            const dlDisplay = item.download_mbps ? `<span class="font-mono ltr font-bold">${item.download_mbps} Mbps</span>` : '<span class="text-muted">--</span>';
+            const statusBadge = item.success ? '<span class="badge badge-success">تونل پایدار</span>' : `<span class="badge badge-danger">${item.error || 'ناموفق'}</span>`;
+
+            rowsHtml += `
+                <tr class="${index === 0 && isHealthy ? 'top-row' : ''}">
+                    <td class="font-mono text-muted">${index + 1}</td>
+                    <td><strong class="domain-name font-mono ltr">${item.domain}</strong></td>
+                    <td>${pingDisplay}</td>
+                    <td>${jitterDisplay}</td>
+                    <td>${dlDisplay}</td>
+                    <td><div class="score-pill score-${Math.floor((item.score || 0) / 20)}">${item.score}/100</div></td>
+                    <td><span class="badge-grade ${gradeClass}">${item.grade}</span></td>
+                    <td>${statusBadge}</td>
+                    <td>
+                        <button class="btn btn-sm btn-copy" onclick="copyToClipboard('${item.domain}')">📋 کپی SNI</button>
+                    </td>
+                </tr>
+            `;
+        } else {
+            const tlsDisplay = item.is_tls13 ? '<span class="badge badge-success">TLS 1.3</span>' : `<span class="badge badge-warning">${item.tls_version || 'Fail'}</span>`;
+            const alpnDisplay = item.alpn ? `<span class="badge badge-info font-mono">${item.alpn}</span>` : '<span class="text-muted">None</span>';
+            const ipDisplay = item.primary_ip ? `<span class="font-mono ltr">${item.primary_ip}</span>` : '<span class="text-danger">نامعتبر</span>';
+            const statusBadge = isHealthy ? '<span class="badge badge-success">مناسب Reality</span>' : '<span class="badge badge-danger">نامناسب</span>';
+
+            let certHealthDisplay = '<span class="text-muted font-mono">--</span>';
+            if (item.cert_trusted && item.cert_valid) {
+                const issuerShort = (item.issuer || 'Trusted CA').substring(0, 14);
+                const daysText = item.cert_expires_days !== null ? `${item.cert_expires_days} روز` : 'معتبر';
+                certHealthDisplay = `<span class="badge badge-success font-mono" title="صادرکننده: ${item.issuer || ''} | تاریخ انقضا: ${item.cert_not_after || ''}">✅ ${issuerShort} (${daysText})</span>`;
+            } else if (item.cert_expires_days !== null && item.cert_expires_days <= 0) {
+                certHealthDisplay = `<span class="badge badge-danger" title="${item.cert_not_after || ''}">❌ منقضی شده</span>`;
+            } else if (item.cert_trusted === false) {
+                certHealthDisplay = `<span class="badge badge-warning" title="${item.error || 'گواهی بدون اعتماد عمومی'}">⚠️ بدون اعتماد عمومی</span>`;
+            } else if (item.cert_san_matched === false && item.cert_san && item.cert_san.length > 0) {
+                certHealthDisplay = `<span class="badge badge-warning" title="عدم تطابق با SAN دامنه">⚠️ عدم تطابق SAN</span>`;
+            }
+
+            rowsHtml += `
+                <tr class="${index === 0 && isHealthy ? 'top-row' : ''}">
+                    <td class="font-mono text-muted">${index + 1}</td>
+                    <td><strong class="domain-name font-mono ltr">${item.domain}</strong></td>
+                    <td>${pingDisplay}</td>
+                    <td>${certHealthDisplay}</td>
+                    <td><div class="score-pill score-${Math.floor((item.score || 0) / 20)}">${item.score}/100</div></td>
+                    <td><span class="badge-grade ${gradeClass}">${item.grade}</span></td>
+                    <td>${tlsDisplay}</td>
+                    <td>${alpnDisplay}</td>
+                    <td>${ipDisplay}</td>
+                    <td>${statusBadge}</td>
+                    <td>
+                        <div style="display: flex; gap: 6px; flex-wrap: wrap;">
+                            <button class="btn btn-sm btn-copy" onclick="copyToClipboard('${item.domain}')">📋 کپی SNI</button>
+                            <button class="btn btn-sm btn-panel-cfg" onclick="openPanelModal('${item.domain}', '${item.alpn || 'h2'}')">⚡️ تنظیم در پنل</button>
+                        </div>
+                    </td>
+                </tr>
+            `;
         }
-
-        rowsHtml += `
-            <tr class="${index === 0 && isHealthy ? 'top-row' : ''}">
-                <td class="font-mono text-muted">${index + 1}</td>
-                <td>
-                    <div class="domain-cell">
-                        <strong class="domain-name font-mono ltr">${item.domain}</strong>
-                    </div>
-                </td>
-                <td>${pingDisplay}</td>
-                <td>${certHealthDisplay}</td>
-                <td>
-                    <div class="score-pill score-${Math.floor(item.score / 20)}">
-                        ${item.score}/100
-                    </div>
-                </td>
-                <td><span class="badge-grade ${gradeClass}">${item.grade}</span></td>
-                <td>${tlsDisplay}</td>
-                <td>${alpnDisplay}</td>
-                <td>${ipDisplay}</td>
-                <td>${statusBadge}</td>
-                <td>
-                    <div style="display: flex; gap: 6px; flex-wrap: wrap;">
-                        <button class="btn btn-sm btn-copy" onclick="copyToClipboard('${item.domain}')" title="کپی نام دامنه">
-                            📋 کپی SNI
-                        </button>
-                        <button class="btn btn-sm btn-panel-cfg" onclick="openPanelModal('${item.domain}', '${item.alpn || 'h2'}')" title="کپی کانفیگ آماده پنل">
-                            ⚡️ تنظیم در پنل
-                        </button>
-                    </div>
-                </td>
-            </tr>
-        `;
     });
 
     tbody.innerHTML = rowsHtml;
@@ -422,35 +532,31 @@ function exportJson() {
     const dataStr = 'data:text/json;charset=utf-8,' + encodeURIComponent(JSON.stringify(allResults, null, 2));
     const dlAnchor = document.createElement('a');
     dlAnchor.setAttribute('href', dataStr);
-    dlAnchor.setAttribute('download', `sni_scanner_${Date.now()}.json`);
+    dlAnchor.setAttribute('download', `sni_scanner_${currentMethod}_${Date.now()}.json`);
     dlAnchor.click();
     dlAnchor.remove();
 }
 
 function exportCsv() {
     if (allResults.length === 0) return;
-    const headers = ['domain', 'latency_ms', 'tcp_latency_ms', 'score', 'grade', 'is_tls13', 'alpn', 'primary_ip', 'tags'];
+    const isTunnel = (currentMethod === 'vless_client' || currentMethod === 'panel_api');
+    const headers = isTunnel 
+        ? ['domain', 'latency_ms', 'jitter_ms', 'download_mbps', 'score', 'grade', 'success', 'error']
+        : ['domain', 'latency_ms', 'score', 'grade', 'is_tls13', 'alpn', 'primary_ip', 'tags'];
+
     let csvContent = 'data:text/csv;charset=utf-8,' + headers.join(',') + '\n';
 
     allResults.forEach(r => {
-        const row = [
-            r.domain,
-            r.latency_ms || '',
-            r.tcp_latency_ms || '',
-            r.score,
-            r.grade,
-            r.is_tls13,
-            r.alpn || '',
-            r.primary_ip || '',
-            `"${(r.tags || []).join(';')}"`
-        ];
+        const row = isTunnel
+            ? [r.domain, r.latency_ms || '', r.jitter_ms || '', r.download_mbps || '', r.score, r.grade, r.success, `"${r.error || ''}"`]
+            : [r.domain, r.latency_ms || '', r.score, r.grade, r.is_tls13, r.alpn || '', r.primary_ip || '', `"${(r.tags || []).join(';')}"`];
         csvContent += row.join(',') + '\n';
     });
 
     const encodedUri = encodeURI(csvContent);
     const link = document.createElement('a');
     link.setAttribute('href', encodedUri);
-    link.setAttribute('download', `sni_scanner_${Date.now()}.csv`);
+    link.setAttribute('download', `sni_scanner_${currentMethod}_${Date.now()}.csv`);
     link.click();
     link.remove();
 }

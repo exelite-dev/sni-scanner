@@ -23,13 +23,13 @@
                 <div class="logo-box">
                     <span class="logo-icon">⚡️</span>
                     <div>
-                        <h1 class="logo-title">SNI SCANNER <span class="badge-pro">PRO 2.2</span></h1>
-                        <p class="logo-subtitle">اسکنر اختصاصی دامنه و SNI با راستی‌آزمایی عمیق گواهی‌های TLS و سلامت شبکه</p>
+                        <h1 class="logo-title">SNI SCANNER <span class="badge-pro">PRO 2.4</span></h1>
+                        <p class="logo-subtitle">مگا-اسکنر چندمنظوره با ۳ روش اختصاصی: اسکن بدون پسورد، تست زنده تونل VLESS و اتوماسیون API پنل</p>
                     </div>
                 </div>
                 <div class="header-status">
                     <span class="status-indicator online"></span>
-                    <span class="status-text">متصل به آرشیو Tranco 1M و مگا-دیتابیس دامنه‌ها</span>
+                    <span class="status-text">آماده به کار • متصل به آرشیو ۱ میلیون دامنه</span>
                 </div>
             </div>
         </header>
@@ -39,11 +39,83 @@
             <!-- Controls Section -->
             <section class="bento-card config-section glass-card">
                 <div class="card-header">
-                    <h2>⚙️ تنظیمات منبع و اسکنر</h2>
-                    <span class="badge badge-accent">اتصال به مگا-دیتابیس & Tranco 1M</span>
+                    <h2>⚙️ انتخاب متد و تنظیمات اسکن</h2>
+                    <span class="badge badge-accent">پشتیبانی از ۳ روش اعتبارسنجی</span>
                 </div>
 
                 <form id="scanForm">
+                    <!-- Method Selector Tabs -->
+                    <div class="method-selector-container">
+                        <label class="section-label">🎯 روش اعتبارسنجی مورد نظر خود را انتخاب کنید:</label>
+                        <div class="method-pills">
+                            <button type="button" class="method-pill active" data-method="standard" id="methodStandardBtn">
+                                <span class="pill-icon">⚡️</span>
+                                <div class="pill-text">
+                                    <strong>روش ۱: اسکن استاندارد SNI</strong>
+                                    <small>تست سریع TLS 1.3، ALPN و پینگ (بدون نیاز به دسترسی یا کلاینت)</small>
+                                </div>
+                            </button>
+                            <button type="button" class="method-pill" data-method="vless_client" id="methodVlessBtn">
+                                <span class="pill-icon">🚀</span>
+                                <div class="pill-text">
+                                    <strong>روش ۲: بنچمارک زنده تونل Reality</strong>
+                                    <small>با وارد کردن کانفیگ کلاینت VLESS (پینگ، دانلود، آپلود و جیتر زنده)</small>
+                                </div>
+                            </button>
+                            <button type="button" class="method-pill" data-method="panel_api" id="methodPanelBtn">
+                                <span class="pill-icon">🏢</span>
+                                <div class="pill-text">
+                                    <strong>روش ۳: تست اتوماتیک با API پنل</strong>
+                                    <small>اتصال به 3X-UI / vpn-ui با ساخت و حذف خودکار اینباند موقت</small>
+                                </div>
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Method 2 Fields (Hidden by default) -->
+                    <div id="method2Fields" class="method-fields-card" style="display: none;">
+                        <div class="form-group">
+                            <label for="vlessUriInput">🔗 لینک کانفیگ VLESS Reality شما (از v2rayN یا کلاینت):</label>
+                            <input type="text" id="vlessUriInput" class="form-control ltr" placeholder="vless://uuid@host:port?security=reality&sni=example.com&pbk=...&sid=...#ConfigName">
+                            <small class="field-hint">✅ اسکنر این کانفیگ را به صورت محلی گرفته و با تغییر SNI، عملکرد واقعی تونل، پینگ و سرعت دانلود را می‌سنجد.</small>
+                        </div>
+                        <div class="form-group">
+                            <label for="corePathInput">مسیر باینری هسته کلاینت (Xray / Sing-box) - اختیاری:</label>
+                            <input type="text" id="corePathInput" class="form-control ltr" placeholder="پیش‌فرض: شناسایی خودکار از سیستم یا حالت شبیه‌ساز امن">
+                        </div>
+                    </div>
+
+                    <!-- Method 3 Fields (Hidden by default) -->
+                    <div id="method3Fields" class="method-fields-card" style="display: none;">
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="panelUrlInput">آدرس کامل پنل (Panel Base URL):</label>
+                                <input type="url" id="panelUrlInput" class="form-control ltr" placeholder="http://48.102.164.241:2053">
+                            </div>
+                            <div class="form-group">
+                                <label for="panelTypeSelect">نوع پنل سرور:</label>
+                                <select id="panelTypeSelect" class="form-control">
+                                    <option value="3x-ui" selected>3X-UI (MHSanaei)</option>
+                                    <option value="vpn-ui">vpn-ui / X-UI استاندارد</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="panelUserInput">نام کاربری ادمین (Username):</label>
+                                <input type="text" id="panelUserInput" class="form-control ltr" placeholder="admin">
+                            </div>
+                            <div class="form-group">
+                                <label for="panelPassInput">رمز عبور ادمین (Password):</label>
+                                <input type="password" id="panelPassInput" class="form-control ltr" placeholder="••••••••">
+                            </div>
+                        </div>
+                        <div class="security-note">
+                            🛡 <strong>تضمین پاک‌سازی:</strong> اسکنر یک اینباند تستی موقت ایجاد کرده و بلافاصله پس از اتمام تست یا در صورت خطا، آن را به طور کامل از پنل حذف می‌کند.
+                        </div>
+                    </div>
+
+                    <!-- Shared Category & Source Options -->
                     <div class="form-group">
                         <label for="categorySelect">انتخاب منبع دامنه‌ها (آرشیو لوکال، دسته‌ها و منابع آنلاین):</label>
                         <select id="categorySelect" class="form-control">
@@ -79,11 +151,11 @@
                         <div class="form-group">
                             <label for="scanLimitSelect">تعداد دامنه برای اسکن:</label>
                             <select id="scanLimitSelect" class="form-control">
-                                <option value="50">⚡️ ۵۰ دامنه (اسکن فوق‌سریع در چند ثانیه)</option>
-                                <option value="100" selected>⚡️ ۱۰۰ دامنه برتر (پیش‌فرض توصیه شده)</option>
-                                <option value="250">🔍 ۲۵۰ دامنه (عمیق)</option>
-                                <option value="500">🔥 ۵۰۰ دامنه (بسیار جامع)</option>
-                                <option value="1000">🚀 ۱۰۰۰ دامنه از آرشیو</option>
+                                <option value="25">⚡️ ۲۵ دامنه (اسکن سریع)</option>
+                                <option value="50">⚡️ ۵۰ دامنه</option>
+                                <option value="100" selected>⚡️ ۱۰۰ دامنه برتر (پیش‌فرض)</option>
+                                <option value="250">🔍 ۲۵۰ دامنه</option>
+                                <option value="500">🔥 ۵۰۰ دامنه</option>
                             </select>
                         </div>
                         <div class="form-group">
@@ -95,7 +167,7 @@
                         </div>
                     </div>
 
-                    <div class="form-row">
+                    <div id="method1ServerGroup" class="form-row">
                         <div class="form-group">
                             <label for="serverIp">آی‌پی سرور شما (لوکیشن‌یابی خودکار و تست پینگ):</label>
                             <div class="input-with-geo">
@@ -108,43 +180,27 @@
                         </div>
                         <div class="form-group">
                             <label for="serverPort">پورت اینباند Reality:</label>
-                            <input type="number" id="serverPort" class="form-control ltr" value="7">
+                            <input type="number" id="serverPort" class="form-control ltr" value="7" min="1" max="65535">
                         </div>
-                    </div>
-
-                    <div class="form-row">
-                        <div class="form-group">
-                            <label for="concurrencyInput">تعداد ورکر همزمان (Concurrency):</label>
-                            <input type="number" id="concurrencyInput" class="form-control ltr" value="20" min="1" max="50">
-                        </div>
-                        <div class="form-group">
-                            <label for="timeoutInput">تایم‌اوت هر تست (ثانیه):</label>
-                            <input type="number" id="timeoutInput" class="form-control ltr" value="3.5" step="0.5" min="1" max="10">
-                        </div>
-                    </div>
-
-                    <div class="form-group">
-                        <label for="customDomains">یا دامنه‌های دلخواه خودت را بنویس (اختیاری - با کاما یا خط جدید):</label>
-                        <textarea id="customDomains" class="form-control ltr" rows="2" placeholder="speedtest.net, hetzner.com, ..."></textarea>
                     </div>
 
                     <div class="form-actions">
-                        <button type="submit" id="startScanBtn" class="btn btn-primary glow-btn">
-                            <span class="btn-icon">🚀</span> شروع اسکن زنده
+                        <button type="submit" id="startScanBtn" class="btn btn-primary btn-glow">
+                            🚀 شروع اسکن زنده
                         </button>
                         <button type="button" id="stopScanBtn" class="btn btn-danger" disabled>
-                            <span class="btn-icon">⏹</span> توقف
+                            ⏹ توقف اسکن
                         </button>
                     </div>
                 </form>
             </section>
 
-            <!-- Metrics Bento -->
-            <section class="bento-metrics">
+            <!-- Metrics Cards Section -->
+            <section class="metrics-grid">
                 <div class="metric-card glass-card">
-                    <div class="metric-icon">🔍</div>
+                    <div class="metric-icon">📊</div>
                     <div class="metric-info">
-                        <span class="metric-label">اسکن شده / کل</span>
+                        <span class="metric-label">دامنه‌های پردازش‌شده</span>
                         <h3 id="statProgress">0 / 0</h3>
                     </div>
                 </div>
@@ -152,7 +208,7 @@
                 <div class="metric-card glass-card">
                     <div class="metric-icon">🛡</div>
                     <div class="metric-info">
-                        <span class="metric-label">گواهی‌های معتبر و فعال</span>
+                        <span class="metric-label" id="metricSuccessLabel">گواهی‌های معتبر و فعال</span>
                         <h3 id="statTls13">0</h3>
                     </div>
                 </div>
@@ -211,15 +267,15 @@
 
                 <div class="table-responsive">
                     <table class="sni-table">
-                        <thead>
+                        <thead id="resultsTableHead">
                             <tr>
                                 <th>#</th>
                                 <th>دامنه (SNI)</th>
                                 <th>پینگ کل</th>
-                                <th>وضعیت و اعتبار گواهی (SSL Health)</th>
+                                <th>وضعیت گواهی (SSL Health)</th>
                                 <th>امتیاز</th>
                                 <th>گرید</th>
-                                <th>نسخه TLS</th>
+                                <th>TLS</th>
                                 <th>ALPN</th>
                                 <th>آی‌پی تمیز</th>
                                 <th>وضعیت</th>
@@ -243,53 +299,45 @@
     </div>
 
     <!-- Reality Panel Guide Modal -->
-    <div id="panelModal" class="modal-backdrop" style="display: none;">
-        <div class="modal-box glass-card">
+    <div id="panelModal" class="modal-overlay" style="display: none;">
+        <div class="modal-card glass-card">
             <div class="modal-header">
-                <h3>⚡️ مقادیر آماده برای ثبت در پنل (3x-ui / Marzban / Hiddify)</h3>
-                <button type="button" class="btn-close" onclick="closePanelModal()">✕</button>
+                <h3>⚡️ مقادیر آماده برای ثبت در پنل VLESS Reality</h3>
+                <button class="modal-close" onclick="closePanelModal()">✕</button>
             </div>
             <div class="modal-body">
-                <div class="alert-notice">
-                    <span class="notice-icon">⚠️</span>
-                    <div>
-                        <strong>نکته حیاتی برای رفع خطای Handshake Failure:</strong>
-                        <p>همیشه فیلد <b>Target</b> و فیلد <b>SNI</b> باید متعلق به یک سایت باشند. هرگز یک سایت را در Target و سایت دیگر را در SNI نگذارید.</p>
+                <p>این مقادیر را دقیقاً در تنظیمات اینباند Reality در پنل کپی کنید:</p>
+                <div class="copy-field">
+                    <label>Target (مقصد):</label>
+                    <div class="input-action-row">
+                        <input type="text" id="modalTargetVal" class="form-control ltr" readonly>
+                        <button class="btn btn-sm btn-secondary" onclick="copyFromInput('modalTargetVal')">کپی</button>
                     </div>
                 </div>
-
-                <div class="config-field-group">
-                    <label>مقدار فیلد Target (یا Dest):</label>
-                    <div class="input-copy-group">
-                        <input type="text" id="modalTargetVal" class="form-control ltr font-mono" readonly>
-                        <button class="btn btn-primary btn-sm" onclick="copyFromInput('modalTargetVal')">کپی Target</button>
+                <div class="copy-field">
+                    <label>SNI (Server Name Indication):</label>
+                    <div class="input-action-row">
+                        <input type="text" id="modalSniVal" class="form-control ltr" readonly>
+                        <button class="btn btn-sm btn-secondary" onclick="copyFromInput('modalSniVal')">کپی</button>
                     </div>
                 </div>
-
-                <div class="config-field-group">
-                    <label>مقدار فیلد SNI (یا ServerNames):</label>
-                    <div class="input-copy-group">
-                        <input type="text" id="modalSniVal" class="form-control ltr font-mono" readonly>
-                        <button class="btn btn-primary btn-sm" onclick="copyFromInput('modalSniVal')">کپی SNI</button>
-                    </div>
-                </div>
-
-                <div class="config-field-group">
-                    <label>پروتکل و فینگرپرینت پیشنهادی:</label>
-                    <div class="input-copy-group">
-                        <input type="text" id="modalFingerprintVal" class="form-control ltr font-mono" value="Fingerprint: chrome | ALPN: h2,http/1.1" readonly>
+                <div class="copy-field">
+                    <label>Fingerprint & ALPN:</label>
+                    <div class="input-action-row">
+                        <input type="text" id="modalFingerprintVal" class="form-control ltr" readonly>
+                        <button class="btn btn-sm btn-secondary" onclick="copyFromInput('modalFingerprintVal')">کپی</button>
                     </div>
                 </div>
             </div>
             <div class="modal-footer">
-                <button type="button" class="btn btn-outline" onclick="copyAllPanelConfig()">📋 کپی یکجای هر دو فیلد</button>
-                <button type="button" class="btn btn-primary" onclick="closePanelModal()">متوجه شدم و بستن</button>
+                <button class="btn btn-primary" onclick="copyAllPanelConfig()">📋 کپی کل کانفیگ یکجا</button>
+                <button class="btn btn-outline" onclick="closePanelModal()">بستن</button>
             </div>
         </div>
     </div>
 
     <!-- Toast Notification -->
-    <div id="toast" class="toast">کپی شد!</div>
+    <div id="toast" class="toast">پیام سیستم</div>
 
     <script src="/static/app.js"></script>
 </body>
